@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.DS_Store
+skill.zip
+.codebase-video/
+render-jobs/current/
+tts-jobs/current/
+node_modules/
+out/
