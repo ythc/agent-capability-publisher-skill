@@ -1,48 +1,32 @@
-# Release hygiene
+# 正式发布清理
 
-## Product-facing content
+## README 和 Demo
 
-The project homepage should answer:
+- README 只描述最终能力、安装、使用、输出和限制。
+- 不写“之前怎么失败、后来怎么修”的过程，除非用户明确需要 changelog 或工程复盘。
+- 自生成 Demo 可以保留，并明确说明它是该能力自身生成的成品示例。
 
-- What is this?
-- Who is it for?
-- How do I install it?
-- How do I use it?
-- What does it produce?
-- What limitations or safety rules matter?
+## Git 历史
 
-Keep rejected approaches, debugging chronology, and implementation detours out of the homepage.
+默认保留历史。
 
-## Preserve vs clean
+如果用户只是不想在 GitHub 首页文件列表里看到开发过程提交，可以用一次正式发布提交触碰需要展示的路径，让 “Latest commit” 列统一成中性的发布信息。
 
-Preserve:
+不要为了美化首页就自动 squash 或 force-push。重写历史必须再次取得明确授权。
 
-- Git history;
-- meaningful architecture decisions encoded in current docs;
-- reusable scripts and templates;
-- final demo media.
+## 临时内容
 
-Clean:
+正式发布前清理一次性 TTS job、render job、单次测试 workflow、cache、`node_modules`、`out/` 和 staging 目录。保留真正的运行脚本、可复用 workflow 模板、references 和最终 Demo。
 
-- temporary render jobs;
-- copied artifacts used only for one test;
-- obsolete workflows;
-- caches/build outputs;
-- stale screenshots or videos replaced by a final version.
+## 发布状态措辞
 
-## Commit-message presentation
+区分：
 
-GitHub's file list shows the latest commit touching each path. There is no simple README setting that hides this column.
+- 文件已生成；
+- validator 通过；
+- 脚本实际运行通过；
+- 已上传 GitHub；
+- Plugin manifest 已解析；
+- Codex 端到端安装已验证。
 
-Do not rewrite history merely to make this column prettier. If the user explicitly wants normalized latest-commit labels while preserving history, explain that Git must touch those paths (or history must be rewritten), and get confirmation before any metadata-only workaround. Always verify final file modes/content after such an operation.
-
-## Release summary
-
-State separately:
-
-- what was created;
-- what was validated locally;
-- what was tested against GitHub/Codex;
-- what remains unverified.
-
-Never turn a syntax check into a claim of end-to-end install success.
+不要把前一步成功等同于后一步。
