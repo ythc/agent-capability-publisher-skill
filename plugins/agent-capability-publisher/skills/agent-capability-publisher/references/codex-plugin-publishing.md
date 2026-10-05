@@ -1,18 +1,22 @@
-# Codex Plugin publishing
+# Codex Plugin 分发
 
-Use current official OpenAI documentation before release because Plugin formats and install surfaces can evolve.
+## 原则
 
-## Skills-only Plugin
+当用户希望 Skill 可以在 Codex 里安装和发现时，把最终 Skill 包装成 skills-only Plugin，而不是只交付一个 `skill.zip`。
 
-A Plugin can contain only Skills. An MCP server is optional and should be omitted when the workflow needs only packaged instructions/resources.
+发布前重新核对当前 OpenAI 官方 Plugin / Codex 文档，避免把某一时期的安装命令或 manifest 结构永久写死。
 
-Recommended portable shape:
+## 推荐结构
 
 ```text
-my-plugin/
+.agents/plugins/marketplace.json
+
+plugins/<plugin-name>/
 ├── plugin.json
+├── .codex-plugin/
+│   └── plugin.json
 └── skills/
-    └── my-capability/
+    └── <skill-name>/
         ├── SKILL.md
         ├── agents/
         ├── scripts/
@@ -20,51 +24,31 @@ my-plugin/
         └── assets/
 ```
 
-A root `.codex-plugin/plugin.json` compatibility manifest may also be present when useful.
+skills-only Plugin 不需要为了“像 Plugin”而额外创建 MCP Server。
 
-## Repository marketplace
+## Portable manifest
 
-A repository can expose one or more plugins through:
+优先使用当前 portable 根 `plugin.json`。Plugin 标识、版本、展示名、描述和 Skill 目录要互相一致。`shortDescription` 保持足够短，并在打包前实际检查平台长度限制。
 
-```text
-.agents/plugins/marketplace.json
+## Marketplace
+
+仓库 Marketplace 放在 `.agents/plugins/marketplace.json`。其中本地 source path 按 Marketplace 仓库根目录解析，例如：
+
+```json
+{
+  "source": {
+    "source": "local",
+    "path": "./plugins/my-plugin"
+  }
+}
 ```
 
-Marketplace `source.path` values resolve from the marketplace/repository root, not from `.agents/plugins/`.
+不要误以为它是相对于 `.agents/plugins/` 解析。
 
-Typical repository:
+## 安装验证
 
-```text
-repo/
-├── .agents/plugins/marketplace.json
-└── plugins/
-    └── my-plugin/
-        ├── plugin.json
-        └── skills/
-            └── my-capability/
-                └── SKILL.md
-```
+把 Codex 安装命令写入 README 前，查询当前官方文档并确认实际语法。结构校验通过不等于端到端安装已验证。
 
-## Installation verification
+能运行 Codex CLI 时，尽量真实测试：添加 Marketplace → 确认列表可见 → 进入 `/plugins` → 安装 Plugin → 新建会话 → 用典型请求验证 Skill 能被发现和触发。
 
-Before placing commands in README, check the current OpenAI documentation. For a GitHub-backed marketplace, current Codex CLI supports a pattern like:
-
-```text
-codex plugin marketplace add owner/repo --ref main
-codex plugin marketplace list
-```
-
-Then users can browse/install through the supported Plugin UI/surface. Do not assume a command remains valid forever; verify it at release time.
-
-## Public directory vs repo marketplace
-
-Treat these as separate distribution modes:
-
-- **Repo/local marketplace**: useful for authoring, testing, team/private distribution.
-- **Universal public directory**: requires the current OpenAI submission flow and publication metadata.
-
-Do not claim a GitHub marketplace automatically publishes to the universal directory.
-
-## Sync rule
-
-Maintain one canonical Skill source during development. Before release, mirror the validated Skill into the plugin's `skills/<skill-name>/` directory with `scripts/sync_codex_plugin.py` or an equivalent deterministic step. Verify the copy matches the canonical Skill.
+无法运行 Codex CLI 时，要明确写“结构和 manifest 已验证，但端到端安装尚未在当前环境实际测试”。
