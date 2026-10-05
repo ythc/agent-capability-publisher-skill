@@ -1,4 +1,4 @@
 interface:
   display_name: "Agent Capability Publisher"
-  short_description: "Turn a workflow into a validated Skill and GitHub/Codex release"
-  default_prompt: "Turn this workflow into a production-quality Agent Skill, validate it, package it, and prepare it for GitHub and Codex distribution."
+  short_description: "把工作流发布成可验证的 Skill 和 Codex Plugin"
+  default_prompt: "把这个工作流整理成生产可用的 Agent Skill，完成校验、打包，并准备 GitHub 和 Codex 分发；如果使用 GitHub Connector，新建仓库后先确认当前 GitHub App 已授权该仓库。"
