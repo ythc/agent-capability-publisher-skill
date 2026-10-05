@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Capability Publisher"
+  short_description: "Turn a workflow into a validated Skill and GitHub/Codex release"
+  default_prompt: "Turn this workflow into a production-quality Agent Skill, validate it, package it, and prepare it for GitHub and Codex distribution."
