@@ -1,59 +1,32 @@
-# Skill design
+# Skill 设计规范
 
-## Structure
+## 分层
 
-Prefer:
+把内容分成三层：
 
-```text
-skill-name/
-├── SKILL.md
-├── agents/openai.yaml
-├── scripts/        # deterministic operations
-├── references/     # detailed guidance loaded only when needed
-└── assets/         # templates/resources used in outputs
-```
+1. **SKILL.md**：控制流程、关键约束、决策树、何时读取其他资源。
+2. **references/**：条件性细节、平台规范、工作流说明、长文档。
+3. **scripts/**：需要稳定、可重复执行的确定性操作。
 
-Not every directory is required.
+## SKILL.md
 
-## SKILL.md as control plane
-
-Keep `SKILL.md` concise and operational. It should contain:
-
-- capability and invariants;
-- high-level sequential workflow;
-- important decision branches;
-- guardrails;
-- pointers explaining exactly when to read each reference.
-
-Move long platform instructions, schemas, troubleshooting, and checklists into `references/`.
-
-## Frontmatter
-
-Use only the fields accepted by the target validator. For a portable Skill, default to:
-
-```yaml
----
-name: short-hyphen-name
-description: What it does. Use when ...
----
-```
-
-The description is the activation mechanism. Include what the Skill does and when it should be used.
-
-## Scripts
-
-Use scripts when a step is fragile, deterministic, or repeatedly reimplemented. Give scripts stable CLI interfaces and meaningful `--help` output. Treat them as black boxes first; read or patch implementation only when needed.
-
-Test scripts before packaging. Do not ship placeholders.
+- frontmatter 保持简洁，只放平台允许的字段；
+- `name` 使用小写连字符；
+- `description` 同时覆盖能力和触发条件；
+- 正文尽量短，像控制平面，不像知识库；
+- 优先写动作、决策和约束，而不是背景知识；
+- 超过约 500 行时继续拆分。
 
 ## References
 
-Use references for details that are valuable but not always needed. Keep them one level away from `SKILL.md`. Add a table of contents to long references.
+适合放平台规范、复杂发布流程、输出格式、QA 清单和条件分支说明。长 reference 建议加目录；尽量让 `SKILL.md` 直接链接，不做多层嵌套跳转。
 
-## Assets
+## Scripts
 
-Use assets for output templates or boilerplate that should be copied rather than reasoned over. Do not put developer documentation in assets just to avoid organizing it.
+只有当脚本能提高正确性、稳定性或重复利用价值时才加入。新增脚本后：先运行 `--help` 或最小调用，再执行代表性输入，验证输出和失败分支，并删除 placeholder。
 
-## Packaging boundary
+## Skill 与项目展示分离
 
-The Skill bundle is for agent runtime. The GitHub repository is for humans and distribution. README files, demo videos, release notes, and repository badges normally belong outside `skill.zip` unless the Skill itself consumes them.
+- Skill 运行时包只包含需要的 `SKILL.md`、`agents/`、`scripts/`、`references/`、`assets/`。
+- README、Demo 视频、宣传图片和 GitHub 页面文档属于仓库展示层，不默认进入 Skill 包。
+- 如果还要做 Codex Plugin，把 Skill 镜像进 `plugins/<plugin>/skills/<skill>/`，而不是让 README 充当运行说明。
