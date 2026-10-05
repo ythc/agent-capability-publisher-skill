@@ -1,45 +1,39 @@
-# Requirements intake
+# 需求理解与收敛
 
-Use this before implementation. Ask only for details that are missing and material.
+## 目标
 
-## Minimum contract
+把用户的自然语言需求、示例、反复修改和已接受结果，整理成一个稳定、可复用的 Skill 规范。
 
-Resolve these fields:
+## 优先收集的信息
 
-| Field | What to capture |
-| --- | --- |
-| User goal | The repeatable outcome the Skill should deliver |
-| Inputs | Files, URLs, repos, prompts, records, or connected-app data |
-| Outputs | Artifacts, actions, edits, summaries, reports, videos, etc. |
-| Trigger examples | Direct and indirect requests that should activate the Skill |
-| Non-trigger examples | Adjacent requests that should not activate it |
-| Tools/connectors | GitHub, Drive, Slack, MCP, browser, local filesystem, etc. |
-| Constraints | Security, language, format, latency, cost, environment, permissions |
-| Definition of done | How the user will judge the workflow successful |
+1. **输入**：用户通常会给什么？文本、文件、代码仓库、URL、连接器数据还是已有项目？
+2. **输出**：最终应该交付什么？文本结果、文件、代码、Skill 包、Plugin、GitHub 仓库还是多种产物？
+3. **触发方式**：用户会用什么样的自然语言请求触发这个 Skill？
+4. **工具/连接器**：需要 GitHub、文件系统、浏览器、第三方 API、MCP 或其他连接器吗？
+5. **约束**：语言、格式、时长、目录结构、安全要求、成本、是否允许联网等。
+6. **完成标准**：怎样才算“真的完成”，而不是只生成了部分文件？
 
-## Concrete examples
+## 处理已有对话
 
-Collect 2–5 examples. For each example, capture:
+如果当前对话已经包含多轮需求迭代：
 
-1. user request;
-2. available context/input;
-3. expected behavior;
-4. expected output;
-5. important failure/edge cases.
+- 优先提取用户最终接受的版本；
+- 把后续明确修正覆盖早期假设；
+- 保留真正稳定的经验，不把开发过程本身写进最终 Skill；
+- 不重复询问已经明确的信息。
 
-## Avoid redundant questions
+## 什么时候必须追问
 
-If the conversation already established the input, output, connectors, or constraints, summarize them and proceed. Ask only when ambiguity would change implementation.
+只有当缺失信息会实质改变 Skill 行为、输出、权限或安全边界时才追问，例如：不知道目标输入、最终交付形态、是否允许写 GitHub，或是否允许覆盖已有文件。
 
-## Convert conversation history into requirements
+## 推荐输出
 
-Long iterative conversations often contain the best specification. Extract:
-
-- decisions the user accepted;
-- rejected approaches and why;
-- quality problems discovered during real use;
-- defaults that repeatedly worked;
-- final product positioning;
-- distribution expectations.
-
-Do not copy the whole development story into the new Skill. Convert lessons into durable rules.
+```text
+目标：
+输入：
+输出：
+典型触发请求：
+依赖工具/连接器：
+关键约束：
+完成标准：
+```
